@@ -1,0 +1,4 @@
+.ide/
+target/
+*.iml
+/src/main/resources/jdbc.properties

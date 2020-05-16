@@ -14,5 +14,16 @@ public class Main {
                .build();
 
        dao.addToDatabase(student);
+
+        // U - Update
+        Student studentToUpdate = Student.builder()
+                .firstName("Gracjan")
+                .lastName("Nowak")
+                .alive(false)
+                .height(2.13)
+                .age(36)
+                .id(1L)         // wymaga podania identyfikatora
+                .build();
+        dao.updateStudent(studentToUpdate);
     }
 }

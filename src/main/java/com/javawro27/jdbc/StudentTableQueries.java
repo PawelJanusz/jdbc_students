@@ -10,4 +10,16 @@ public interface StudentTableQueries {
             "`age` INT NOT NULL,\n" +
             "`alive` BOOLEAN NOT NULL);";
     String INSERT_STUDENT_QUERY = "insert into `students` (`first_name`, `last_name`, `height`, `age`, `alive`) values ( ?, ?, ?, ?, ?);";
+    String SELECT_ALL_STUDENTS_QUERY =
+            "select * from `students`;";
+
+    String UPDATE_STUDENT_QUERY = "update `students` set " +
+            "`first_name`= ?, " +
+            "`last_name` = ?, " +
+            "`height` = ?, " +
+            "`age`= ?, " +
+            "`alive`= ? " +
+            "where `id` = ?;";
+
+    String DELETE_STUDENT_QUERY = "delete from `students` where `id` = ?;";
 }

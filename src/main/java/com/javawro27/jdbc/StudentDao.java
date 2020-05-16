@@ -1,9 +1,8 @@
 package com.javawro27.jdbc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 // Student DAO reprezentuje obiekt DATA ACCESS OBJECT - obiekt dostępu do danych
 // narzędzie do zarządzania obiektami w bazie danych
@@ -33,7 +32,79 @@ public class StudentDao {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
         // 4. przetworzenie/parsowanie wartości-
         // 5. posprzątanie po wszystkim
+
+        public List<Student> getAllStudents() {
+            List<Student> list = new ArrayList<>();
+
+            try (Connection connection = mysqlConnection.getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement(StudentTableQueries.SELECT_ALL_STUDENTS_QUERY)) {
+                    ResultSet resultSet = statement.executeQuery();
+                    // metoda next powoduje przejście do następnego rekordu
+                    while (resultSet.next()) {
+                        // 4. przetworzenie/parsowanie wartości-
+                        Student newStudent = Student.builder()
+                                .id(resultSet.getLong(1))
+                                .firstName(resultSet.getString(2))
+                                .lastName(resultSet.getString(3))
+                                .height(resultSet.getDouble(4))
+                                .age(resultSet.getInt(5))
+                                .alive(resultSet.getBoolean(6))
+                                .build();
+                        list.add(newStudent);
+                    }
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            return list;
+
+        }
+
+        public void updateStudent(Student student) {
+            if (student.getId() == null) {
+                System.err.println("Can't edit student without id.");
+                return;
+            }
+            try (Connection connection = mysqlConnection.getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement(StudentTableQueries.UPDATE_STUDENT_QUERY)) {
+                    statement.setString(1, student.getFirstName());
+                    statement.setString(2, student.getLastName());
+                    statement.setDouble(3, student.getHeight());
+                    statement.setInt(4, student.getAge());
+                    statement.setBoolean(5, student.isAlive());
+                    // uzupełnienie klauzuli where
+                    statement.setLong(6, student.getId());
+                    int affectedRecords = statement.executeUpdate();
+                    System.out.println("Edytowanych rekordów: " + affectedRecords);
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+    public void deleteStudent(Student student){
+        if (student.getId() == null) {
+            System.err.println("Can't edit student without id.");
+            return;
+        }
+        deleteStudent(student.getId());
     }
+    public void deleteStudent(Long studentId) {
+        try (Connection connection = mysqlConnection.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(StudentTableQueries.DELETE_STUDENT_QUERY)) {
+                // uzupełnienie klauzuli where
+                statement.setLong(1, studentId);
+                int affectedRecords = statement.executeUpdate();
+                System.out.println("Edytowanych rekordów: " + affectedRecords);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
+
+
 }
