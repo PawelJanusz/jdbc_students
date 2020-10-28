@@ -24,7 +24,7 @@ public class MySqlConnectionParameters {
     // ładujemy plik z parametrami z resources
     private void init() {
         try {
-            Properties propertiesHolder = loadProperties();
+            Properties propertiesHolder = loadProperties(); // metoda do załadowania pliku
             username = propertiesHolder.getProperty("database.jdbc.username");
             password = propertiesHolder.getProperty("database.jdbc.password");
             databaseName = propertiesHolder.getProperty("database.jdbc.name");

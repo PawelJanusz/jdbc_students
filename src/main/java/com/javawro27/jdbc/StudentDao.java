@@ -14,12 +14,16 @@ public class StudentDao {
     }
 
     public void addToDatabase(Student student) {
+        Connection connection = null;
+        PreparedStatement statement = null;
         try {
             // 1. stworzyć połączenie
-            Connection connection = mysqlConnection.getConnection();
+            connection = mysqlConnection.getConnection();
             // 2. otwieranie zapytania
             // zapytanie z możliwością ustawienia parametrów
-            PreparedStatement statement = connection.prepareStatement(StudentTableQueries.INSERT_STUDENT_QUERY, Statement.RETURN_GENERATED_KEYS);
+            statement = connection.prepareStatement(
+                        StudentTableQueries.INSERT_STUDENT_QUERY,
+                        Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, student.getFirstName());
             statement.setString(2, student.getLastName());
             statement.setDouble(3, student.getHeight());
@@ -31,6 +35,17 @@ public class StudentDao {
             // todo: trzeba jeszcze odebrać identyfikator wygenerowanego rekordu.
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }finally {
+           try {
+               if (connection != null){
+                   if (statement != null){
+                       statement.close();
+                   }
+                   connection.close();
+               }
+           }catch (SQLException throwables){
+               System.err.println("Błąd zamknięcia połączenia");
+           }
         }
     }
         // 4. przetworzenie/parsowanie wartości-
@@ -77,6 +92,7 @@ public class StudentDao {
                     statement.setBoolean(5, student.isAlive());
                     // uzupełnienie klauzuli where
                     statement.setLong(6, student.getId());
+
                     int affectedRecords = statement.executeUpdate();
                     System.out.println("Edytowanych rekordów: " + affectedRecords);
                 }
