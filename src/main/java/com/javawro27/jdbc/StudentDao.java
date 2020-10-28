@@ -32,7 +32,14 @@ public class StudentDao {
             // 3. realizacja zapytnia
             // ile zostało edytowanych rekordów
             int affectedRecords = statement.executeUpdate();
-            // todo: trzeba jeszcze odebrać identyfikator wygenerowanego rekordu.
+
+            //identyfikatory wygenerowane
+            ResultSet generatedKeys = statement.getGeneratedKeys();
+            if (generatedKeys.next()){ //jesli jest rekord
+                Long generatedKey = generatedKeys.getLong(1);
+                student.setId(generatedKey);
+            }
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }finally {
